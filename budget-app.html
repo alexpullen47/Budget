@@ -53,6 +53,8 @@ body{display:flex;flex-direction:column}
 .cat-add-btn:active{border-color:var(--text);color:var(--text)}
 .btn-add{width:100%;padding:14px;font-size:15px;font-weight:500;border-radius:var(--radius-sm);border:none;background:var(--text);color:var(--bg);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:-.2px;margin-top:2px;transition:opacity .15s}
 .btn-add:active{opacity:.8}
+.btn-secondary{width:100%;padding:14px;font-size:15px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px}
+.btn-danger-full{width:100%;padding:14px;font-size:15px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px}
 .btn-cancel{width:100%;padding:14px;font-size:15px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px}
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}
 .list-item:last-child{border-bottom:none}
@@ -79,7 +81,7 @@ body{display:flex;flex-direction:column}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0));width:100%;max-width:480px;animation:slideUp .25s ease}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0));width:100%;max-width:480px;animation:slideUp .25s ease;max-height:85vh;overflow-y:auto}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-title{font-size:17px;font-weight:500;margin-bottom:16px;letter-spacing:-.3px}
 .new-cat-row{display:none;gap:8px;margin-bottom:12px}
@@ -87,12 +89,13 @@ body{display:flex;flex-direction:column}
 .new-cat-row input{flex:1;background:var(--bg3);border:1px solid var(--green);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:11px 13px;outline:none}
 .new-cat-row button{padding:0 16px;border-radius:var(--radius-sm);border:none;background:var(--green);color:#000;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
-/* Month history */
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .month-nav-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.month-nav-btn:disabled{color:var(--muted);border-color:var(--border);opacity:.4}
+.month-nav-btn:disabled{color:var(--muted);opacity:.4}
 .month-label{font-size:15px;font-weight:500;font-family:'DM Mono',monospace}
-.history-badge{font-size:11px;color:var(--amber);background:rgba(251,191,36,.12);border-radius:4px;padding:2px 8px;font-family:'DM Mono',monospace}
+.history-badge{font-size:11px;color:var(--amber);background:rgba(251,191,36,.12);border-radius:4px;padding:2px 8px;font-family:'DM Mono',monospace;margin-left:6px}
+.restore-area{width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:12px;outline:none;resize:none;margin-bottom:8px}
+.info-text{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -101,7 +104,7 @@ body{display:flex;flex-direction:column}
   <!-- OVERVIEW -->
   <div class="page active" id="page-overview">
     <div class="topbar">
-      <div><div class="topbar-title">Budget</div><div class="topbar-sub" id="ov-month"></div></div>
+      <div><div class="topbar-title">Budget</div></div>
     </div>
     <div class="month-nav">
       <button class="month-nav-btn" id="btn-prev-month" onclick="changeMonth(-1)">‹</button>
@@ -185,6 +188,12 @@ body{display:flex;flex-direction:column}
       <button class="btn-add" onclick="saveSavings()">Set goal</button>
     </div>
     <div class="card"><div class="card-label">Savings overview</div><div id="sav-overview"></div></div>
+    <div class="card">
+      <div class="card-label">Backup & Restore</div>
+      <p class="info-text">Export your data as a backup file. If you ever lose your data, restore it by pasting the backup below.</p>
+      <button class="btn-add" onclick="exportData()">Export backup</button>
+      <button class="btn-secondary" onclick="openRestoreModal()">Restore from backup</button>
+    </div>
   </div>
 
 </div>
@@ -227,6 +236,17 @@ body{display:flex;flex-direction:column}
   </div>
 </div>
 
+<!-- RESTORE MODAL -->
+<div class="modal-overlay" id="restore-modal" onclick="closeRestoreOutside(event)">
+  <div class="modal">
+    <div class="modal-title">Restore from backup</div>
+    <p class="info-text">Paste your backup text below. This will overwrite all current data.</p>
+    <textarea class="restore-area" id="restore-input" placeholder="Paste backup text here…"></textarea>
+    <button class="btn-add" onclick="restoreData()">Restore</button>
+    <button class="btn-cancel" onclick="closeRestoreModal()">Cancel</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -251,21 +271,13 @@ if(!state.months)state.months={};
 const TODAY=new Date();
 const CURRENT_KEY=monthKey(TODAY);
 
-// Auto-rollover: if we haven't seen this month yet, archive previous and start fresh
 function checkRollover(){
-  if(state.lastSeenMonth && state.lastSeenMonth!==CURRENT_KEY){
-    // new month detected — purchases already stored in months[lastSeenMonth], nothing to do
-    // just update lastSeenMonth
-  }
-  if(!state.months[CURRENT_KEY]){
-    state.months[CURRENT_KEY]={purchases:[]};
-  }
+  if(!state.months[CURRENT_KEY])state.months[CURRENT_KEY]={purchases:[]};
   state.lastSeenMonth=CURRENT_KEY;
   save();
 }
 checkRollover();
 
-// viewMonth: which month we're viewing (default = current)
 let viewKey=CURRENT_KEY;
 let editCtx={type:null,id:null};
 
@@ -275,7 +287,7 @@ function totalRecurring(){return state.recurring.reduce((s,r)=>s+r.amount,0)}
 function totalPurchasesFor(key){return(state.months[key]?.purchases||[]).reduce((s,p)=>s+p.amount,0)}
 function leftoverFor(key){return totalIncome()-totalRecurring()-totalPurchasesFor(key)-state.savingsGoal}
 
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
 
 function populateSelect(selId,cats,selected){
   const sel=document.getElementById(selId);
@@ -315,16 +327,14 @@ function showPage(tab){
   if(tab==='savings')renderSavings();
 }
 
-// Month navigation
 function getSortedMonthKeys(){
-  return Object.keys(state.months).sort();
+  const keys=Object.keys(state.months);
+  if(!keys.includes(CURRENT_KEY))keys.push(CURRENT_KEY);
+  return keys.sort();
 }
 
 function changeMonth(dir){
   const keys=getSortedMonthKeys();
-  // include current month even if not in history yet
-  if(!keys.includes(CURRENT_KEY))keys.push(CURRENT_KEY);
-  keys.sort();
   const idx=keys.indexOf(viewKey);
   const newIdx=idx+dir;
   if(newIdx<0||newIdx>=keys.length)return;
@@ -336,33 +346,21 @@ function changeMonth(dir){
 
 function renderOverview(){
   const isCurrentMonth=viewKey===CURRENT_KEY;
-  const income=totalIncome();
-  const rec=totalRecurring();
-  const pur=totalPurchasesFor(viewKey);
-  const sav=state.savingsGoal;
-  const left=leftoverFor(viewKey);
+  const income=totalIncome(),rec=totalRecurring(),pur=totalPurchasesFor(viewKey),sav=state.savingsGoal,left=leftoverFor(viewKey);
   const leftClass=left<0?'c-red':left<income*0.1?'c-amber':'c-green';
-
   document.getElementById('ov-month-label').textContent=monthLabel(viewKey);
-  const badge=document.getElementById('ov-history-badge');
-  badge.style.display=isCurrentMonth?'none':'inline';
-
+  document.getElementById('ov-history-badge').style.display=isCurrentMonth?'none':'inline';
   const keys=getSortedMonthKeys();
-  if(!keys.includes(CURRENT_KEY))keys.push(CURRENT_KEY);
-  keys.sort();
   const idx=keys.indexOf(viewKey);
   document.getElementById('btn-prev-month').disabled=idx<=0;
   document.getElementById('btn-next-month').disabled=idx>=keys.length-1;
-
   document.getElementById('ov-leftover').className='balance-val '+leftClass;
   document.getElementById('ov-leftover').textContent=(left<0?'−':'')+fmt(Math.abs(left));
-
   document.getElementById('ov-metrics').innerHTML=`
     <div class="metric"><div class="metric-lbl">Income</div><div class="metric-val c-green">${fmt(income)}</div></div>
     <div class="metric"><div class="metric-lbl">Recurring</div><div class="metric-val c-amber">${fmt(rec)}</div></div>
     <div class="metric"><div class="metric-lbl">Spent</div><div class="metric-val c-red">${fmt(pur)}</div></div>
     <div class="metric"><div class="metric-lbl">Saving</div><div class="metric-val c-blue">${fmt(sav)}</div></div>`;
-
   const total=income>0?income:1;
   const rP=Math.min(rec/total*100,100),puP=Math.min(pur/total*100,100),sP=Math.min(sav/total*100,100),lP=Math.max(100-rP-puP-sP,0);
   document.getElementById('ov-bar').innerHTML=
@@ -375,7 +373,6 @@ function renderOverview(){
     <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Purchases</div>
     <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Savings</div>
     <div class="leg-item"><div class="leg-dot" style="background:var(--bg3);border:1px solid var(--border)"></div>Left over</div>`;
-
   const cats={};
   [...state.recurring,...(state.months[viewKey]?.purchases||[])].forEach(i=>{cats[i.cat]=(cats[i.cat]||0)+i.amount;});
   const catEl=document.getElementById('ov-cats');
@@ -388,7 +385,6 @@ function renderOverview(){
   }).join('');
 }
 
-// MODAL
 function openModal(type,id){
   editCtx={type,id};
   const cats=type==='recurring'?state.recCats:state.purCats;
@@ -412,13 +408,51 @@ function saveEdit(){
     const item=state.recurring.find(x=>x.id===editCtx.id);
     if(item){item.name=name;item.amount=amount;item.cat=cat;}
     save();closeModal();renderRecurring();
-  } else {
+  }else{
     const purchases=state.months[viewKey]?.purchases||[];
     const item=purchases.find(x=>x.id===editCtx.id);
     if(item){item.name=name;item.amount=amount;item.cat=cat;}
     save();closeModal();renderPurchases();renderOverview();
   }
   toast('Changes saved');
+}
+
+// BACKUP & RESTORE
+function exportData(){
+  const json=JSON.stringify(state);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const date=new Date().toISOString().slice(0,10);
+  a.href=url;a.download=`budget-backup-${date}.json`;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast('Backup exported!');
+}
+
+function openRestoreModal(){
+  document.getElementById('restore-input').value='';
+  document.getElementById('restore-modal').classList.add('open');
+}
+function closeRestoreModal(){document.getElementById('restore-modal').classList.remove('open');}
+function closeRestoreOutside(e){if(e.target===document.getElementById('restore-modal'))closeRestoreModal();}
+
+function restoreData(){
+  const raw=document.getElementById('restore-input').value.trim();
+  if(!raw){toast('Paste your backup first');return;}
+  try{
+    const parsed=JSON.parse(raw);
+    if(typeof parsed.wage==='undefined'){toast('Invalid backup file');return;}
+    Object.assign(state,parsed);
+    save();closeRestoreModal();
+    populateSelect('rec-cat',state.recCats);
+    populateSelect('pur-cat',state.purCats);
+    if(state.wage>0)document.getElementById('wage-input').placeholder=fmt(state.wage)+'/mo';
+    if(state.savingsGoal>0)document.getElementById('sav-input').placeholder=fmt(state.savingsGoal)+'/mo';
+    viewKey=CURRENT_KEY;
+    renderOverview();renderRecurring();renderPurchases();renderExtras();renderSavings();
+    toast('Data restored successfully!');
+  }catch(e){toast('Invalid backup — check and try again');}
 }
 
 function saveWage(){
@@ -480,7 +514,6 @@ function addPurchase(){
   state.months[CURRENT_KEY].purchases.push({id:Date.now(),name:n,amount:a,cat:c,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})});
   save();
   document.getElementById('pur-name').value='';document.getElementById('pur-amount').value='';
-  // switch view to current month if not already
   viewKey=CURRENT_KEY;
   renderPurchases();renderOverview();toast('Purchase logged');
 }
